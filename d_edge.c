@@ -21,12 +21,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 #include "d_local.h"
+#include "r_local.h"
 
 int miplevel;
 float   scale_for_mip;
-int     screenwidth;
 int     ubasestep, errorterm, erroradjustup, erroradjustdown;
-int     vstartscan;
+extern int     vstartscan;
 
 // FIXME: should go away
 extern void     R_RotateBmodel (void);

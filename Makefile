@@ -26,7 +26,7 @@ FLAGS=${bin-prefix}flags
 STRIP=${bin-prefix}strip -s
 
 BASE_CFLAGS=-Dstricmp=strcasecmp -m68060 -Wall -DM68K_MIX -DM68KASM
-RELEASE_CFLAGS=$(BASE_CFLAGS) -O3 -fomit-frame-pointer -ffast-math
+RELEASE_CFLAGS=$(BASE_CFLAGS) -O2 -fomit-frame-pointer -ffast-math
 DEBUG_CFLAGS=$(BASE_CFLAGS) -g
 LDFLAGS=-lm
 
@@ -124,6 +124,7 @@ QUAKE_OBJS = \
 	$(BUILDDIR)/obj/world.o \
 	$(BUILDDIR)/obj/cd_atari.o \
 	$(BUILDDIR)/obj/vid_atari.o \
+	$(BUILDDIR)/obj/vid_atari_nova.o \
 	$(BUILDDIR)/obj/snd_dma.o \
 	$(BUILDDIR)/obj/snd_mem.o \
 	$(BUILDDIR)/obj/snd_mix.o \
@@ -133,7 +134,9 @@ QUAKE_OBJS = \
 	\
 	$(BUILDDIR)/obj/keys_atari_asm.o \
 	$(BUILDDIR)/obj/vid_atari_asm.o \
-	$(BUILDDIR)/obj/snd_atari_asm.o	
+	$(BUILDDIR)/obj/snd_atari_asm.o
+
+
 	
 # use -DM68KASM when you want to use the following
 QUAKE_M68K_OBJS = \
@@ -372,6 +375,9 @@ $(BUILDDIR)/obj/sys_atari.o :$(MOUNT_DIR)/sys_atari.c
 	$(DO_CC)
 
 $(BUILDDIR)/obj/vid_atari.o:$(MOUNT_DIR)/vid_atari.c
+	$(DO_CC)
+
+$(BUILDDIR)/obj/vid_atari_nova.o:$(MOUNT_DIR)/vid_atari_nova.c
 	$(DO_CC)
 
 $(BUILDDIR)/obj/snd_dma.o :  $(MOUNT_DIR)/snd_dma.c

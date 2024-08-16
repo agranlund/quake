@@ -33,6 +33,11 @@
 #include "keys_atari_asm.h"
 #include "in_atari.h"
 
+
+#define NO_ATARI_IKBD
+//#define NO_ATARI_PRINTF
+#define SYS_PRINTF_SERIAL
+
 qboolean isDedicated = false;
 
 #define SCANCODE_BUFFER_SIZE 256
@@ -81,11 +86,18 @@ void Sys_Init( void )
 	_KEYTAB*	pSKeyboards;
 	//char*		pOldssp;
 
+#ifndef NO_ATARI_PRINTF && defined(SYS_PRINTF_SERIAL)
+    //Fforce(1, Fdup(2));
+    Fforce(1, -2);
+#endif
+
 	// clear scancode buffer
 	memset( g_scancodeBuffer, 0, SCANCODE_BUFFER_SIZE );
 
 	// setup new ikbd handler
+#ifndef NO_ATARI_IKBD    
 	atari_ikbd_init();
+#endif    
 
 	// get translation tables
 	pSKeyboards = Keytbl( KT_NOCHANGE, KT_NOCHANGE, KT_NOCHANGE );
@@ -201,6 +213,7 @@ int Sys_FileOpenRead (char *path, int *hndl)
 	i = findhandle ();
 
 	f = fopen(path, "rb");
+
 	if (!f)
 	{
 		*hndl = -1;
@@ -296,18 +309,19 @@ void Sys_Error (char *error, ...)
 void Sys_Printf (char *fmt, ...)
 {
 	va_list         argptr;
-
 	va_start (argptr,fmt);
+#ifndef NO_ATARI_PRINTF
 	vprintf (fmt,argptr);
+#endif
 	va_end (argptr);
 }
 
 void Sys_Quit (void)
 {
 	Host_Shutdown();
-
+#ifndef NO_ATARI_IKBD
 	atari_ikbd_shutdown();
-
+#endif
 	exit( 0 );
 }
 

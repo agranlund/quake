@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "r_local.h"
 
 //define	PASSAGES
-
 void		*colormap;
 vec3_t		viewlightvec;
 alight_t	r_viewlighting = {128, 192, viewlightvec};
@@ -1061,8 +1060,8 @@ void R_RenderView (void)
 	if ( (long)(&dummy) & 3 )
 		Sys_Error ("Stack is missaligned");
 
-	if ( (long)(&r_warpbuffer) & 3 )
-		Sys_Error ("Globals are missaligned");
+//	if ( (long)(&r_warpbuffer) & 3 )
+//		Sys_Error ("Globals are missaligned %08x", (long)&r_warpbuffer);
 
 	R_RenderView_ ();
 }
