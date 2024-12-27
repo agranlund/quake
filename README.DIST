@@ -1,0 +1,23 @@
+
+Atari Quake
+https://github.com/agranlund/quake
+
+Based on Atari Quake 1.00 by mikrosk
+https://github.com/mikrosk/quake
+
+
+This work in progress port attempts to add support for non Falcon hardware.
+
+Changes:
+- NOVA graphics card support
+- Do not use STe/Falcon DMA sound when not available
+- Reduced heapsize to 8mb
+
+Issues:
+There is no input support yet, meaning you cannot actually play or quit the game.
+You can pretty much only watch the self running demo at this point.
+
+
+usage:
+Copy Quake PAK files into the ID1 folder
+Run quake.ttp
