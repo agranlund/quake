@@ -24,6 +24,7 @@
 #include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/ostruct.h>
+#include <mint/cookie.h>
 
 #include "snd_atari_asm.h"
 
@@ -45,6 +46,22 @@ static qboolean isSndInited = false;
 
 qboolean SNDDMA_Init(void)
 {
+    long snd_cookie = 0;
+    if (Getcookie(C__SND, &snd_cookie) == C_FOUND) {
+        // falcon audio is required.
+        // most code does xbios access but there is some direct hardware access in snd_atari_asm.s
+        if (((snd_cookie & (1 << 1)) == 0) ||
+            ((snd_cookie & (1 << 4)) == 0)) {
+                snd_cookie = 0;
+            }
+    }
+
+    if (snd_cookie == 0)
+    {
+		Con_Printf( "Sound system cannot be initialized!\n" );
+        return false;
+    }
+
 	if( Locksnd() == SNDLOCKED )
 	{
 		Con_Printf( "Sound system is already in use!\n" );
