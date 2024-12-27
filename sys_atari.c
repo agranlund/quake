@@ -399,7 +399,7 @@ int main (int argc, char **argv)
 
 	Sys_Init();
 
-	parms.memsize = 32*1024*1024;
+	parms.memsize = 8*1024*1024;       // original PC version = 5.5mb
 	parms.basedir = ".";
 
 	COM_InitArgv (argc, argv);
