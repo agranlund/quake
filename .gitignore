@@ -1,0 +1,8 @@
+*.o
+.DS_Store
+release/*
+debug/*
+quake.zip
+quake/*
+
+
