@@ -297,11 +297,20 @@ long video_nova_exist() {
     return Supexec(NovaGetCookie);
 }
 
+static int pal_shadow_valid;
+static unsigned char pal_shadow[256*4];
+
 long video_nova_init(unsigned short mwidth, unsigned short mheight, unsigned short width, unsigned short height) {
     src_width = width;
     src_height = height;
     mon_width = mwidth;
     mon_height = mheight;
+    for (int i=0; i<256; i++) {
+        pal_shadow[(i*4)+0] = 0x00;
+        pal_shadow[(i*4)+1] = 0x00;
+        pal_shadow[(i*4)+2] = 0x00;
+        pal_shadow[(i*4)+3] = 0xff;
+    }
     return Supexec(NovaInit);
 };
 
@@ -310,12 +319,27 @@ void video_nova_shutdown() {
 }
 
 void video_nova_setcolors(unsigned char* pal, unsigned short start, unsigned short count) {
-    short i;
-    if (nova) {
-        for (i = start; i < (start + count); i++) {
-            NovaSetColor(i, &pal[i*3]);
+    if (!nova) {
+        return;
+    }
+
+	void* sp = (void *)Super(NULL);
+    unsigned char* pp = &pal[start*3];
+    unsigned char* cp = &pal_shadow[start<<2];
+    for (short i = start; i < (start + count); i++, pp+=3, cp+=4) {
+        if (cp[3] || (pp[0] != cp[0]) || (pp[1] != cp[1]) || (pp[2] != cp[2])) {
+            cp[0] = pp[0]; cp[1] = pp[1]; cp[2] = pp[2]; cp[3] = 0;
+            __asm__ __volatile__ (
+                "movel	%0,%%d0\n\t"
+                "movel	%1,%%a0\n\t"
+                "movel	%2,%%a1\n\t"
+                "jsr	%%a1@"
+                : : "g"(i), "g"(pp), "g"(nova->p_setcol) : "d0", "d1", "d2", "a0", "a1", "a2", "cc", "memory"
+            );
+            //NovaSetColor(i, pp);
         }
     }
+	SuperToUser(sp);
 }
 
 void video_nova_blit(char* buf, short x, short y, short w, short h) {
@@ -323,15 +347,13 @@ void video_nova_blit(char* buf, short x, short y, short w, short h) {
         short pitch = modes[cur_res].pitch;
         char* src = buf + x + (y * src_width);
         char* dst = cur_scrbuf + cur_scroffs + x + (y * pitch);
-        short i;
-
         if (w == pitch)
         {
             memcpy(dst, src, w * h);
         }
         else
         {
-            for (i = 0; i < h; i++)
+            for (short i = 0; i < h; i++)
             {
                 memcpy(dst, src, w);
                 dst += pitch;
